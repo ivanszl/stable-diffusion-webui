@@ -44,9 +44,9 @@ def txt2img_create_processing(id_task: str, request: gr.Request, prompt: str, ne
         hr_prompt=hr_prompt,
         hr_negative_prompt=hr_negative_prompt,
         override_settings=override_settings,
-        timer=timer.Timer(),
     )
-
+    
+    p.timer = timer.Timer()
     p.scripts = modules.scripts.scripts_txt2img
     p.script_args = args
 
