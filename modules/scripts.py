@@ -764,6 +764,7 @@ class ScriptRunner:
 
         script_args = args[script.args_from:script.args_to]
         processed = script.run(p, *script_args)
+        p.timer.record(script.name)
 
         shared.total_tqdm.clear()
 
@@ -774,6 +775,7 @@ class ScriptRunner:
             try:
                 script_args = p.script_args[script.args_from:script.args_to]
                 script.before_process(p, *script_args)
+                p.timer.record(f'{script.name} before process')
             except Exception:
                 errors.report(f"Error running before_process: {script.filename}", exc_info=True)
 
@@ -782,6 +784,7 @@ class ScriptRunner:
             try:
                 script_args = p.script_args[script.args_from:script.args_to]
                 script.process(p, *script_args)
+                p.timer.record(f'{script.name} process')
             except Exception:
                 errors.report(f"Error running process: {script.filename}", exc_info=True)
 
@@ -790,6 +793,7 @@ class ScriptRunner:
             try:
                 script_args = p.script_args[script.args_from:script.args_to]
                 script.before_process_batch(p, *script_args, **kwargs)
+                p.timer.record(f'{script.name} before process batch')
             except Exception:
                 errors.report(f"Error running before_process_batch: {script.filename}", exc_info=True)
 
@@ -806,6 +810,7 @@ class ScriptRunner:
             try:
                 script_args = p.script_args[script.args_from:script.args_to]
                 script.process_batch(p, *script_args, **kwargs)
+                p.timer.record(f'{script.name} process batch')
             except Exception:
                 errors.report(f"Error running process_batch: {script.filename}", exc_info=True)
 
@@ -814,6 +819,7 @@ class ScriptRunner:
             try:
                 script_args = p.script_args[script.args_from:script.args_to]
                 script.postprocess(p, processed, *script_args)
+                p.timer.record(f'{script.name} postprocess')
             except Exception:
                 errors.report(f"Error running postprocess: {script.filename}", exc_info=True)
 
@@ -822,6 +828,7 @@ class ScriptRunner:
             try:
                 script_args = p.script_args[script.args_from:script.args_to]
                 script.postprocess_batch(p, *script_args, images=images, **kwargs)
+                p.timer.record(f'{script.name} postprocess batch')
             except Exception:
                 errors.report(f"Error running postprocess_batch: {script.filename}", exc_info=True)
 
@@ -830,6 +837,7 @@ class ScriptRunner:
             try:
                 script_args = p.script_args[script.args_from:script.args_to]
                 script.postprocess_batch_list(p, pp, *script_args, **kwargs)
+                p.timer.record(f'{script.name} postprocess batch list')
             except Exception:
                 errors.report(f"Error running postprocess_batch_list: {script.filename}", exc_info=True)
 
@@ -838,6 +846,7 @@ class ScriptRunner:
             try:
                 script_args = p.script_args[script.args_from:script.args_to]
                 script.post_sample(p, ps, *script_args)
+                p.timer.record(f'{script.name} post sample')
             except Exception:
                 errors.report(f"Error running post_sample: {script.filename}", exc_info=True)
 
@@ -846,6 +855,7 @@ class ScriptRunner:
             try:
                 script_args = p.script_args[script.args_from:script.args_to]
                 script.on_mask_blend(p, mba, *script_args)
+                p.timer.record(f'{script.name} on mask blend')
             except Exception:
                 errors.report(f"Error running post_sample: {script.filename}", exc_info=True)
 
@@ -854,6 +864,7 @@ class ScriptRunner:
             try:
                 script_args = p.script_args[script.args_from:script.args_to]
                 script.postprocess_image(p, pp, *script_args)
+                p.timer.record(f'{script.name} postprocess image')
             except Exception:
                 errors.report(f"Error running postprocess_image: {script.filename}", exc_info=True)
 
@@ -862,6 +873,7 @@ class ScriptRunner:
             try:
                 script_args = p.script_args[script.args_from:script.args_to]
                 script.postprocess_maskoverlay(p, ppmo, *script_args)
+                p.timer.record(f'{script.name} postprocess maskoverlay')
             except Exception:
                 errors.report(f"Error running postprocess_image: {script.filename}", exc_info=True)
 
@@ -870,6 +882,7 @@ class ScriptRunner:
             try:
                 script_args = p.script_args[script.args_from:script.args_to]
                 script.postprocess_image_after_composite(p, pp, *script_args)
+                p.timer.record(f'{script.name} postprocess image_after_composite')
             except Exception:
                 errors.report(f"Error running postprocess_image_after_composite: {script.filename}", exc_info=True)
 

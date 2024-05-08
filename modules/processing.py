@@ -4,6 +4,7 @@ import logging
 import math
 import os
 import sys
+import time
 import hashlib
 from dataclasses import dataclass, field
 
@@ -33,6 +34,7 @@ from ldm.models.diffusion.ddpm import LatentDepth2ImageDiffusion
 
 from einops import repeat, rearrange
 from blendmodes.blend import blendLayers, BlendType
+from modules import timer
 
 
 # some of those options should not be changed at all because they would break the model, so I removed them from options.
@@ -226,6 +228,8 @@ class StableDiffusionProcessing:
     sd_vae_hash: str = field(default=None, init=False)
 
     is_api: bool = field(default=False, init=False)
+    
+    timer: timer.Timer = field(default=None, init=False)
 
     def __post_init__(self):
         if self.sampler_index is not None:
@@ -794,7 +798,7 @@ def process_images(p: StableDiffusionProcessing) -> Processed:
 
                 if k == 'sd_vae':
                     sd_vae.reload_vae_weights()
-
+    p.timer.record("process images")
     return res
 
 
@@ -916,9 +920,11 @@ def process_images_inner(p: StableDiffusionProcessing) -> Processed:
                 shared.state.job = f"Batch {n+1} out of {p.n_iter}"
 
             sd_models.apply_alpha_schedule_override(p.sd_model, p)
-
+            
+            # sample_start = time.time()
             with devices.without_autocast() if devices.unet_needs_upcast else devices.autocast():
                 samples_ddim = p.sample(conditioning=p.c, unconditional_conditioning=p.uc, seeds=p.seeds, subseeds=p.subseeds, subseed_strength=p.subseed_strength, prompts=p.prompts)
+            # print(f"Sample speed: {(p.steps / (time.time()-sample_start)):.2f}")
 
             if p.scripts is not None:
                 ps = scripts.PostSampleArgs(samples_ddim)

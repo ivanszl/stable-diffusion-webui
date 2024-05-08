@@ -31,7 +31,7 @@ class TotalTQDM:
 
     def clear(self):
         if self._tqdm is not None:
-            self._tqdm.refresh()
+            # self._tqdm.refresh()
             self._tqdm.close()
             self._tqdm = None
 

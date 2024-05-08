@@ -15,6 +15,7 @@ import modules.shared as shared
 import modules.processing as processing
 from modules.ui import plaintext_to_html
 import modules.scripts
+from modules import timer
 
 
 def process_batch(p, input_dir, output_dir, inpaint_mask_dir, args, to_scale=False, scale_by=1.0, use_png_info=False, png_info_props=None, png_info_dir=None):
@@ -212,6 +213,7 @@ def img2img(id_task: str, mode: int, prompt: str, negative_prompt: str, prompt_s
         inpaint_full_res_padding=inpaint_full_res_padding,
         inpainting_mask_invert=inpainting_mask_invert,
         override_settings=override_settings,
+        timer=timer.Timer(),
     )
 
     p.scripts = modules.scripts.scripts_img2img
@@ -235,6 +237,7 @@ def img2img(id_task: str, mode: int, prompt: str, negative_prompt: str, prompt_s
                 processed = process_images(p)
 
     shared.total_tqdm.clear()
+    print(f"Execute img2img: {p.timer.summary()}.")
 
     generation_info_js = processed.js()
     if opts.samples_log_stdout:

@@ -687,11 +687,12 @@ def send_model_to_trash(m):
     devices.torch_gc()
 
 
-def load_model(checkpoint_info=None, already_loaded_state_dict=None):
+def load_model(checkpoint_info=None, already_loaded_state_dict=None, timer = None):
     from modules import sd_hijack
     checkpoint_info = checkpoint_info or select_checkpoint()
-
-    timer = Timer()
+    
+    if timer is None:
+        timer = Timer()
 
     if model_data.sd_model:
         send_model_to_trash(model_data.sd_model)
@@ -821,7 +822,7 @@ def reuse_model_from_already_loaded(sd_model, checkpoint_info, timer):
         print(f"Loading model {checkpoint_info.title} ({len(model_data.loaded_sd_models) + 1} out of {shared.opts.sd_checkpoints_limit})")
 
         model_data.sd_model = None
-        load_model(checkpoint_info)
+        load_model(checkpoint_info, None, timer)
         return model_data.sd_model
     elif len(model_data.loaded_sd_models) > 0:
         sd_model = model_data.loaded_sd_models.pop()
@@ -874,7 +875,7 @@ def reload_model_weights(sd_model=None, info=None, forced_reload=False):
         if sd_model is not None:
             send_model_to_trash(sd_model)
 
-        load_model(checkpoint_info, already_loaded_state_dict=state_dict)
+        load_model(checkpoint_info, already_loaded_state_dict=state_dict, timer=timer)
         return model_data.sd_model
 
     try:
