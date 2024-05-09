@@ -924,7 +924,8 @@ def process_images_inner(p: StableDiffusionProcessing) -> Processed:
             # sample_start = time.time()
             with devices.without_autocast() if devices.unet_needs_upcast else devices.autocast():
                 samples_ddim = p.sample(conditioning=p.c, unconditional_conditioning=p.uc, seeds=p.seeds, subseeds=p.subseeds, subseed_strength=p.subseed_strength, prompts=p.prompts)
-            p.timer.record("sample")
+            if p.timer is not None:
+                p.timer.record("sample")
             # print(f"Sample speed: {(p.steps / (time.time()-sample_start)):.2f}")
 
             if p.scripts is not None:
@@ -1187,6 +1188,8 @@ class StableDiffusionProcessingTxt2Img(StableDiffusionProcessing):
                 self.truncate_y = (self.hr_upscale_to_y - target_h) // opt_f
 
     def init(self, all_prompts, all_seeds, all_subseeds):
+        if self.timer is None:
+            self.timer = timer.Timer()
         if self.enable_hr:
             self.extra_generation_params["Denoising strength"] = self.denoising_strength
 
@@ -1511,6 +1514,8 @@ class StableDiffusionProcessingImg2Img(StableDiffusionProcessing):
             self.mask_blur_y = value
 
     def init(self, all_prompts, all_seeds, all_subseeds):
+        if self.timer is None:
+            self.timer = timer.Timer()
         self.extra_generation_params["Denoising strength"] = self.denoising_strength
 
         self.image_cfg_scale: float = self.image_cfg_scale if shared.sd_model.cond_stage_key == "edit" else None

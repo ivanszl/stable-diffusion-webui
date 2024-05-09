@@ -214,8 +214,10 @@ def img2img(id_task: str, mode: int, prompt: str, negative_prompt: str, prompt_s
         inpainting_mask_invert=inpainting_mask_invert,
         override_settings=override_settings,
     )
-
-    p.timer=timer.Timer()
+    
+    if p.timer is None:
+        p.timer = timer.Timer()
+        
     p.scripts = modules.scripts.scripts_img2img
     p.script_args = args
 
