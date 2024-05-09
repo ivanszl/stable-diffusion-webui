@@ -261,6 +261,7 @@ class StableDiffusionProcessing:
 
         self.cached_uc = StableDiffusionProcessing.cached_uc
         self.cached_c = StableDiffusionProcessing.cached_c
+        self.timer = timer.Timer()
 
     @property
     def sd_model(self):
@@ -1188,8 +1189,6 @@ class StableDiffusionProcessingTxt2Img(StableDiffusionProcessing):
                 self.truncate_y = (self.hr_upscale_to_y - target_h) // opt_f
 
     def init(self, all_prompts, all_seeds, all_subseeds):
-        if self.timer is None:
-            self.timer = timer.Timer()
         if self.enable_hr:
             self.extra_generation_params["Denoising strength"] = self.denoising_strength
 
@@ -1514,8 +1513,6 @@ class StableDiffusionProcessingImg2Img(StableDiffusionProcessing):
             self.mask_blur_y = value
 
     def init(self, all_prompts, all_seeds, all_subseeds):
-        if self.timer is None:
-            self.timer = timer.Timer()
         self.extra_generation_params["Denoising strength"] = self.denoising_strength
 
         self.image_cfg_scale: float = self.image_cfg_scale if shared.sd_model.cond_stage_key == "edit" else None
