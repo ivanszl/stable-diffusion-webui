@@ -924,6 +924,7 @@ def process_images_inner(p: StableDiffusionProcessing) -> Processed:
             # sample_start = time.time()
             with devices.without_autocast() if devices.unet_needs_upcast else devices.autocast():
                 samples_ddim = p.sample(conditioning=p.c, unconditional_conditioning=p.uc, seeds=p.seeds, subseeds=p.subseeds, subseed_strength=p.subseed_strength, prompts=p.prompts)
+            p.timer.record("sample")
             # print(f"Sample speed: {(p.steps / (time.time()-sample_start)):.2f}")
 
             if p.scripts is not None:
