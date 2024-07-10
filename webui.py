@@ -6,6 +6,8 @@ import time
 from modules import timer
 from modules import initialize_util
 from modules import initialize
+from responses import UJSONResponse
+from hijack import hijack_get_api_info, build_api_info
 
 startup_timer = timer.startup_timer
 startup_timer.record("launcher")
@@ -76,6 +78,9 @@ def webui():
             elif shared.opts.auto_launch_browser == "Local":
                 auto_launch_browser = not cmd_opts.webui_is_non_local
 
+        ## opt get api info
+        hijack_get_api_info()
+
         app, local_url, share_url = shared.demo.launch(
             share=cmd_opts.share,
             server_name=initialize_util.gradio_server_name(),
@@ -91,6 +96,7 @@ def webui():
             app_kwargs={
                 "docs_url": "/docs",
                 "redoc_url": "/redoc",
+                "default_response_class": UJSONResponse,
             },
             root_path=f"/{cmd_opts.subpath}" if cmd_opts.subpath else "",
         )
@@ -117,6 +123,8 @@ def webui():
 
         with startup_timer.subcategory("app_started_callback"):
             script_callbacks.app_started_callback(shared.demo, app)
+        
+        build_api_info(app)
 
         timer.startup_record = startup_timer.dump()
         print(f"Startup time: {startup_timer.summary()}.")
