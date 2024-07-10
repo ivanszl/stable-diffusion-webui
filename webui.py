@@ -124,6 +124,7 @@ def webui():
         with startup_timer.subcategory("app_started_callback"):
             script_callbacks.app_started_callback(shared.demo, app)
         
+        # build gradio api info
         build_api_info(app)
 
         timer.startup_record = startup_timer.dump()
